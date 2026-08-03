@@ -1,8 +1,8 @@
 class CorralVm < Formula
   desc "Manage QEMU and KubeVirt VMs/CTs - CLI, TUI, and web UI in one binary"
   homepage "https://github.com/tuna-os/corral"
-  url "https://github.com/tuna-os/corral/archive/refs/tags/v0.4.0.tar.gz"
-  sha256 "22e816638e105c75e20209ce0a3769829359ea57701be64b65f9ed058f5b4d26"
+  url "https://github.com/tuna-os/corral/archive/refs/tags/v0.5.0.tar.gz"
+  sha256 "f976abad88cab27c7a7e29631e86d6a8464acbfa11ffb79a9e3270eda889af53"
   license "Apache-2.0"
   head "https://github.com/tuna-os/corral.git", branch: "main"
 
