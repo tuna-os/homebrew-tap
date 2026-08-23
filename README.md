@@ -20,9 +20,13 @@ brew install --cask tavern
 
 - `bluefin-cli` (from [tuna-os/bluefin-cli](https://github.com/tuna-os/bluefin-cli))
   is not yet published here — releases ship binary assets since v0.10.6, but
-  the GoReleaser Homebrew publisher has not produced a formula yet. Tracked in
-  [tuna-os/bluefin-cli#141](https://github.com/tuna-os/bluefin-cli/issues/141).
+  the GoReleaser Homebrew publisher has not produced a formula yet.
+  [tuna-os/bluefin-cli#141](https://github.com/tuna-os/bluefin-cli/issues/141)
+  fixed the old install instructions and is closed; no open follow-up issue
+  currently tracks publishing the formula.
 - `tavern`'s cask is hand-maintained here today, not yet auto-published from
   Tavern's own release pipeline the way `corral-vm` is from GoReleaser
-  (tuna-os/Tavern#79). Version/checksum bumps on new Tavern releases need a
-  manual PR here until that's wired up.
+  ([tuna-os/Tavern#79](https://github.com/tuna-os/Tavern/issues/79) tracked
+  adding the cask and is closed). Version/checksum bumps on new Tavern releases
+  need a manual PR here; no open follow-up issue currently tracks automating
+  them.
