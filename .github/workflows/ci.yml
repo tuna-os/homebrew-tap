@@ -1,0 +1,24 @@
+name: CI Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Validate Ruby Syntax
+        run: |
+          echo "Checking Ruby syntax for formulas and casks..."
+          find Formula Casks -name "*.rb" -type f -exec ruby -c {} +
