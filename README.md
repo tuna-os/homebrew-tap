@@ -16,6 +16,12 @@ brew install corral-vm
 brew install --cask tavern
 ```
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the repository layout, local
+prerequisites, and the validation required before proposing formula, cask, or
+documentation changes.
+
 ## Pending
 
 - `bluefin-cli` (from [tuna-os/bluefin-cli](https://github.com/tuna-os/bluefin-cli))
