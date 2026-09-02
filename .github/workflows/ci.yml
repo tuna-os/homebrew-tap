@@ -1,0 +1,45 @@
+name: CI
+
+# scripts/validate-tap.sh already existed but nothing ran it, so a formula or
+# cask with a Ruby syntax error could merge and only be discovered by a user's
+# `brew install`.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Formula/**"
+      - "Casks/**"
+      - "scripts/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "Formula/**"
+      - "Casks/**"
+      - "scripts/**"
+      - ".github/workflows/ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-tap:
+    name: Validate formulas and casks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      # validate-tap.sh exits 0 with a warning when neither ruby nor brew is on
+      # PATH. That is right for a developer's machine and wrong for a gate: it
+      # would report success without having checked anything. Fail the job here
+      # instead, so a green check always means the syntax check really ran.
+      - name: Assert a syntax checker is available
+        run: ruby --version
+
+      - name: Validate formulas and casks
+        run: bash scripts/validate-tap.sh
