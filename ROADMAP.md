@@ -4,7 +4,7 @@ This repository is the supported Homebrew distribution channel for TunaOS
 tools. Its success is measured by whether a supported upstream release becomes
 installable and stays installable, not by the number of formula files added.
 
-## Current state (August 2026)
+## Current state (September 2026)
 
 | Package | Channel state | Upstream ownership |
 | --- | --- | --- |
@@ -12,13 +12,11 @@ installable and stays installable, not by the number of formula files added.
 | `tavern` | Hand-maintained cask at GitHub Release v0.1.9 | Manual; automation not assigned |
 | `bluefin-cli` | Candidate; no formula | Admission and publisher not assigned |
 
-The tap has syntax validation, while producer-to-consumer validation is tracked
-in [#7](https://github.com/tuna-os/homebrew-tap/issues/7). Release-channel
-ownership and freshness are tracked in
-[#12](https://github.com/tuna-os/homebrew-tap/issues/12).
+The tap enforces strict per-file Ruby syntax validation via `scripts/validate-tap.sh` in pre-merge CI, while producer-to-consumer validation (URL, checksum, install checks) is tracked in [#7](https://github.com/tuna-os/homebrew-tap/issues/7). Release-channel ownership and freshness are tracked in [#12](https://github.com/tuna-os/homebrew-tap/issues/12).
 
 ## Near term: define the supported channel
 
+- [x] Implement pre-merge Ruby syntax validation for all formula and cask definitions.
 - [ ] Name an owner in each upstream repository for publishing or updating its
   tap entry.
 - [ ] Set a release-currency objective: update a supported formula or cask, or
