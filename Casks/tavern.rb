@@ -73,7 +73,7 @@ cask "tavern" do
       desktop = File.read("#{staged_path}/squashfs-root/usr/share/applications/dev.hanthor.Tavern.desktop")
       desktop.gsub!(%r{^Exec=.*}, "Exec=#{HOMEBREW_PREFIX}/bin/tavern")
       desktop.gsub!(%r{^Icon=.*}, "Icon=dev.hanthor.Tavern")
-      File.write("#{staged_path}/squashfs-root/dev.hanthor.Tavern.desktop", desktop)
+      File.write("#{staged_path}/squashfs-root/usr/share/applications/dev.hanthor.Tavern.desktop", desktop)
     end
 
     postflight do
