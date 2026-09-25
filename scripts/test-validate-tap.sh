@@ -56,11 +56,21 @@ chmod +x "$fake_bin_dir/ruby"
 
 scratch="$(mktemp -d)"
 mkdir -p "$scratch/Formula" "$scratch/Casks"
-echo 'class Foo; end' >"$scratch/Formula/foo.rb"
-echo 'cask "bar" do; end' >"$scratch/Casks/bar.rb"
+cat >"$scratch/Formula/foo.rb" <<'EOF'
+class Foo < Formula
+  url "https://github.com/tuna-os/foo/archive/refs/tags/v1.0.0.tar.gz"
+  sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+end
+EOF
+cat >"$scratch/Casks/bar.rb" <<'EOF'
+cask "bar" do
+  url "https://github.com/tuna-os/bar/releases/download/v1.0.0/bar.zip"
+  sha256 "1111111111111111111111111111111111111111111111111111111111111111"
+end
+EOF
 out="$(cd "$scratch" && PATH="$fake_bin_dir:$PATH" bash "$SCRIPT" 2>&1)"; code=$?
 assert_exit "all-valid: exits 0" 0 "$code"
-assert_contains "all-valid: reports success" "All formulas and casks passed syntax validation." "$out"
+assert_contains "all-valid: reports success" "All formulas and casks passed syntax and download validation." "$out"
 rm -rf "$scratch"
 teardown_fake_bin
 
