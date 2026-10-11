@@ -16,6 +16,11 @@ brew install corral-vm
 brew install --cask tavern
 ```
 
+## If a release is broken
+
+If a published formula or cask is broken, see [Recovering from a bad Tavern cask release](docs/tavern-cask-rollback.md)
+for diagnosis and recovery steps.
+
 ## Contributing
 
 See [the contribution guide](CONTRIBUTING.md) for the repository layout,
