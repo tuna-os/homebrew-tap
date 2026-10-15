@@ -30,7 +30,7 @@ concurrency:
 jobs:
   validate-tap:
     name: Validate formulas and casks
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
 
