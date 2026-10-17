@@ -61,9 +61,14 @@ cask "tavern" do
                    'this_dir="$(dirname "$(readlink -f "$0")")"')
       # PATCH: set TAVERN_DATADIR so the Python script finds gresource/icons
       # relative to the AppDir, not the hardcoded meson prefix (/usr/share/tavern)
+      # PATCH: export the bundled usr/lib on LD_LIBRARY_PATH. The AppImage
+      # runtime normally does this, but the extracted layout has no runtime:
+      # without it the bundled libgtk-4.so.1 is invisible and the app dies
+      # importing Gtk (GIRepository cannot load the typelib's library).
       apprun.sub!('exec "$this_dir"/AppRun.wrapped "$@"',
                   "export TAVERN_DATADIR=\"$this_dir/usr/share/tavern\"\n" \
                   "export TAVERN_LOCALEDIR=\"$this_dir/usr/share/locale\"\n" \
+                  "export LD_LIBRARY_PATH=\"$this_dir/usr/lib:$LD_LIBRARY_PATH\"\n" \
                   'exec "$this_dir"/AppRun.wrapped "$@"')
       File.write(apprun_path, apprun)
 

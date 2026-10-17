@@ -76,8 +76,16 @@ jobs:
         run: brew trust tuna-os/tap
       - name: Audit casks
         run: brew audit --cask --strict tavern
-      - name: Install tavern cask and verify command
+      - name: Install tavern cask and verify launch
         run: |
           brew install --cask tavern
-          # Verify the cask-specific logic (AppImage extraction, patching, icon setup) succeeded
-          tavern --help || { echo "tavern command failed post-install"; exit 1; }
+          # The app has no --help/--version exit path: every invocation runs
+          # the GUI event loop. Launch it under a virtual display and expect
+          # timeout to kill it (exit 124 = healthy launch; anything else is a
+          # startup crash, e.g. an unresolvable bundled library).
+          xvfb-run -a timeout 25 tavern
+          code=$?
+          if [ "$code" -ne 124 ]; then
+            echo "tavern exited with $code instead of running until timeout" >&2
+            exit 1
+          fi
