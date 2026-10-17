@@ -79,6 +79,10 @@ jobs:
         run: |
           brew untap tuna-os/tap || true
           brew tap tuna-os/tap "$GITHUB_WORKSPACE"
+      # Casks from a path-tapped (hence untrusted) tap refuse to load
+      # until the tap is trusted.
+      - name: Trust this checkout
+        run: brew trust tuna-os/tap
       - name: Audit casks
         run: brew audit --cask --strict tavern
       - name: Install tavern cask and verify command
