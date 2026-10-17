@@ -41,5 +41,37 @@ jobs:
       - name: Assert a syntax checker is available
         run: ruby --version
 
+      # The validator's own regression suite must run in the same required
+      # check, so neither side of the contract can drift silently (#48).
+      - name: Run validator regression suite
+        run: bash scripts/test-validate-tap.sh
+
       - name: Validate formulas and casks
         run: bash scripts/validate-tap.sh
+
+  test-formula:
+    name: Test formulas
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: Homebrew/actions/setup-homebrew@master
+      - name: Audit formulas
+        run: brew audit --strict --online Formula/*.rb
+      - name: Install corral-vm and run its test block
+        run: |
+          brew install --build-from-source ./Formula/corral-vm.rb
+          brew test corral-vm
+
+  test-cask:
+    name: Test casks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: Homebrew/actions/setup-homebrew@master
+      - name: Audit casks
+        run: brew audit --cask --strict Casks/*.rb
+      - name: Install tavern cask and verify command
+        run: |
+          brew install --cask ./Casks/tavern.rb
+          # Verify the cask-specific logic (AppImage extraction, patching, icon setup) succeeded
+          tavern --help || { echo "tavern command failed post-install"; exit 1; }
