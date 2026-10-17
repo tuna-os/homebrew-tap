@@ -83,8 +83,9 @@ jobs:
           # the GUI event loop. Launch it under a virtual display and expect
           # timeout to kill it (exit 124 = healthy launch; anything else is a
           # startup crash, e.g. an unresolvable bundled library).
-          xvfb-run -a timeout 25 tavern
-          code=$?
+          # timeout's 124 must not trip bash -e before we capture it.
+          code=0
+          xvfb-run -a timeout 25 tavern || code=$?
           if [ "$code" -ne 124 ]; then
             echo "tavern exited with $code instead of running until timeout" >&2
             exit 1
