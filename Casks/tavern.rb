@@ -27,7 +27,14 @@ cask "tavern" do
     sha256 "0176f7a3c7372b04dfeda34405068edab8349bc017b48c016b0ea6d40e1e70b3"
     url "https://github.com/tuna-os/Tavern/releases/download/v#{version}/Tavern-Linux.AppImage"
 
+    # The extracted AppImage bundles its own GTK4 but ships only the Adw
+    # typelib without libadwaita, and the extracted layout has no AppImage
+    # runtime to set up the loader path: the app needs the brew GTK stack
+    # for libadwaita (and as fallback libs) plus the LD_LIBRARY_PATH export
+    # in preflight below.
     depends_on formula: "pygobject3"
+    depends_on formula: "gtk4"
+    depends_on formula: "libadwaita"
 
     binary "squashfs-root/AppRun", target: "tavern"
 
@@ -65,10 +72,13 @@ cask "tavern" do
       # runtime normally does this, but the extracted layout has no runtime:
       # without it the bundled libgtk-4.so.1 is invisible and the app dies
       # importing Gtk (GIRepository cannot load the typelib's library).
+      # #{HOMEBREW_PREFIX}/lib covers what the bundle omits (notably
+      # libadwaita, declared in depends_on above): bundled libs win, brew
+      # libs fill the gaps.
       apprun.sub!('exec "$this_dir"/AppRun.wrapped "$@"',
                   "export TAVERN_DATADIR=\"$this_dir/usr/share/tavern\"\n" \
                   "export TAVERN_LOCALEDIR=\"$this_dir/usr/share/locale\"\n" \
-                  "export LD_LIBRARY_PATH=\"$this_dir/usr/lib:$LD_LIBRARY_PATH\"\n" \
+                  "export LD_LIBRARY_PATH=\"$this_dir/usr/lib:#{HOMEBREW_PREFIX}/lib:$LD_LIBRARY_PATH\"\n" \
                   'exec "$this_dir"/AppRun.wrapped "$@"')
       File.write(apprun_path, apprun)
 
