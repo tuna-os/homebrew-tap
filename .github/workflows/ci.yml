@@ -41,5 +41,52 @@ jobs:
       - name: Assert a syntax checker is available
         run: ruby --version
 
+      # The validator's own regression suite must run in the same required
+      # check, so neither side of the contract can drift silently (#48).
+      - name: Run validator regression suite
+        run: bash scripts/test-validate-tap.sh
+
       - name: Validate formulas and casks
         run: bash scripts/validate-tap.sh
+
+  test-formula:
+    name: Test formulas
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: Homebrew/actions/setup-homebrew@main
+      # Formulae and casks from a path-tapped (hence untrusted) tap
+      # refuse to load until the tap is trusted.
+      - name: Trust this checkout
+        run: brew trust tuna-os/tap
+      - name: Audit formulas
+        run: brew audit --strict --online corral-vm
+      - name: Install corral-vm and run its test block
+        run: |
+          brew install --build-from-source corral-vm
+          brew test corral-vm
+
+  test-cask:
+    name: Test casks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: Homebrew/actions/setup-homebrew@main
+      - name: Trust this checkout
+        run: brew trust tuna-os/tap
+      - name: Audit casks
+        run: brew audit --cask --strict tavern
+      - name: Install tavern cask and verify launch
+        run: |
+          brew install --cask tavern
+          # The app has no --help/--version exit path: every invocation runs
+          # the GUI event loop. Launch it under a virtual display and expect
+          # timeout to kill it (exit 124 = healthy launch; anything else is a
+          # startup crash, e.g. an unresolvable bundled library).
+          # timeout's 124 must not trip bash -e before we capture it.
+          code=0
+          xvfb-run -a timeout 25 tavern || code=$?
+          if [ "$code" -ne 124 ]; then
+            echo "tavern exited with $code instead of running until timeout" >&2
+            exit 1
+          fi
