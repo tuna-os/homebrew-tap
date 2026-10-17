@@ -55,13 +55,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: Homebrew/actions/setup-homebrew@main
-      # brew audit resolves formulae by name, not by file path, so the tap
-      # must be tapped first. Tapping the checkout (not the GitHub remote)
-      # audits and installs exactly what this PR contains.
-      - name: Tap this checkout
-        run: |
-          brew untap tuna-os/tap || true
-          brew tap tuna-os/tap "$GITHUB_WORKSPACE"
       # Formulae and casks from a path-tapped (hence untrusted) tap
       # refuse to load until the tap is trusted.
       - name: Trust this checkout
@@ -79,10 +72,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: Homebrew/actions/setup-homebrew@main
-      - name: Tap this checkout
-        run: |
-          brew untap tuna-os/tap || true
-          brew tap tuna-os/tap "$GITHUB_WORKSPACE"
       - name: Trust this checkout
         run: brew trust tuna-os/tap
       - name: Audit casks
