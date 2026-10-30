@@ -51,7 +51,7 @@ jobs:
 
   test-formula:
     name: Test formulas
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: Homebrew/actions/setup-homebrew@main
@@ -68,7 +68,7 @@ jobs:
 
   test-cask:
     name: Test casks
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: Homebrew/actions/setup-homebrew@main
