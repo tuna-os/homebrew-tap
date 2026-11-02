@@ -4,7 +4,7 @@ This repository is the supported Homebrew distribution channel for TunaOS
 tools. Its success is measured by whether a supported upstream release becomes
 installable and stays installable, not by the number of formula files added.
 
-## Current state (measured 2026-09-24)
+## Baseline (measured 2026-09-24)
 
 | Package | Tap has | Upstream has | Publisher | Blocker |
 | --- | --- | --- | --- | --- |
@@ -21,6 +21,19 @@ failure, and this repository has had no record that its 48-hour objective
 [#49](https://github.com/tuna-os/homebrew-tap/issues/49) records
 the measurement.
 
+### Tavern reconciliation — 2026-11-02
+
+The cask now targets the existing stable v0.1.65 release. Downloaded Linux
+and macOS assets match its published `SHA256SUMS`; the AppImage desktop/icon
+IDs and macOS bundle ID are `org.tunaos.tavern`. Linux preflight preserves
+the symlink/data/library fixes and refuses unexpected launcher layouts.
+Both launchers use the declared Homebrew Python/GTK dependencies.
+
+This manual repair does not provision `TAP_GITHUB_TOKEN` (Tavern#299),
+publish a release, establish macOS installation, or close Tavern#104's
+cross-channel install/parity gate. Those acceptance steps remain required.
+
+
 The tap enforces per-file Ruby syntax, organization-owned download URLs and
 pinned SHA-256 digests via `scripts/validate-tap.sh` in pre-merge CI.
 Producer-to-consumer validation (install checks) is tracked in
@@ -35,16 +48,16 @@ ownership and freshness are tracked in
 - [x] Pre-merge validation of every formula and cask: syntax, URL ownership,
   pinned digest (`scripts/validate-tap.sh`, #26, #31).
 - [x] Tavern's authoritative version: its GitHub Releases are current again
-  (v0.1.64 is both the newest tag and the newest Release), so the cask
+  (v0.1.65 is the latest stable GitHub Release), so the cask
   follows Releases and the question is closed.
 - [ ] Provision the tap write credential (`contents:write` on this repository)
   and set it as `TAP_GITHUB_TOKEN` in Tavern and `HOMEBREW_TAP_TOKEN` in
-  bluefin-cli. Needs an org admin; nothing in any tree is wrong
-  ([Tavern#191](https://github.com/tuna-os/Tavern/issues/191),
+  bluefin-cli. Credential creation still requires the owner
+  ([Tavern#299](https://github.com/tuna-os/Tavern/issues/299),
   [bluefin-cli#295](https://github.com/tuna-os/bluefin-cli/issues/295)).
-- [ ] Once the credential exists, re-dispatch Tavern's `Update Homebrew Tap`
-  for v0.1.64 and re-run or wait for the next bluefin-cli release, then
-  confirm `Casks/tavern.rb` and `Formula/bluefin-cli.rb` are current.
+- [ ] Once the credential exists, authorize Tavern's `Update Homebrew Tap`
+  for the current published release and re-run or wait for the next
+  bluefin-cli release, then confirm the cask/formula and install/parity evidence.
 - [ ] Decide corral-vm's publisher: add a GoReleaser Homebrew block in corral,
   or keep manual bumps with a named owner. v0.7.0
   ([corral#339](https://github.com/tuna-os/corral/issues/339)) is the next

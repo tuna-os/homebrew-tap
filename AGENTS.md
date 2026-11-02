@@ -47,25 +47,25 @@ its version or `sha256` is overwritten by the next release, so fix it upstream.
 It is named `corral-vm` only to avoid clashing with homebrew/core's unrelated
 `corral`; the installed command is still `corral`.
 
-`tavern` is the exception: its cask is **hand-maintained in this repo** and is
-not yet published from Tavern's own pipeline, so version bumps do land here.
+Tavern's pipeline updates only the cask version and checksums. Its
+`TAP_GITHUB_TOKEN` is still missing (Tavern#299), so manual bumps remain
+necessary. Cask structure and lifecycle changes belong in this repository.
 
 ## The tavern cask's IDs are pinned to the released binary, not to Tavern's tree
 
-The cask installs `dev.hanthor.Tavern.desktop` / `.svg` and zaps
-`dev.hanthor.Tavern` paths. Tavern's source tree has since renamed its
-application ID to `org.tunaos.tavern`, and "fixing" the cask to match **would
-break it**: the released v0.1.9 AppImage still ships the old ID internally.
-These paths must track whatever ID the *released* artifact contains — verify by
-extracting the AppImage, not by reading Tavern's source.
+The v0.1.65 AppImage contains `org.tunaos.tavern.desktop` / `.svg`; the
+macOS ZIP's `Info.plist` also identifies the app as `org.tunaos.tavern`.
+The cask's artifacts and cleanup paths follow those inspected release
+identities. Do not infer either platform's ID from the current source tree
+or assume they always match: extract each new release before updating.
 
 The `preflight` block also patches the extracted `AppRun`: it rewrites `$0`
 path resolution (broken when AppRun is reached through a symlink in
 `HOMEBREW_PREFIX/bin`) and exports `TAVERN_DATADIR`/`TAVERN_LOCALEDIR` so the
 Python app finds its gresource and icons inside the AppDir instead of the
-hardcoded meson prefix. Both patches are string substitutions against AppRun's
-exact contents — a new AppImage build can silently stop matching, which shows
-up as a launch failure rather than an install failure.
+hardcoded meson prefix. Both patches require the inspected AppRun strings;
+preflight refuses an unrecognized launcher rather than silently leaving it
+unpatched. Both launchers need the declared Homebrew Python/GTK dependencies.
 
 ## Skill: bump-the-tavern-cask
 
@@ -76,12 +76,12 @@ up as a launch failure rather than an install failure.
    notes: `curl -sSfL -o - <url> | sha256sum`.
 3. Update `version`, then **both** `sha256` values — they live in separate
    `on_macos` and `on_linux` blocks and it is easy to update one.
-4. Confirm the AppImage's internal application ID before trusting the existing
-   paths: `./Tavern-Linux.AppImage --appimage-extract` and look at
-   `squashfs-root/usr/share/applications/`. If it has become
-   `org.tunaos.tavern.*`, every `dev.hanthor.Tavern` path in `artifact`,
-   `desktop`, `Icon=` and both `zap trash:` lists changes together.
-5. Check the `preflight` substitutions still match the new `AppRun` — the
-   `gsub!`/`sub!` calls fail silently when the target string has changed.
+4. Extract the AppImage and inspect its application/icon paths, AppRun,
+   wrapped executable and GTK hook. Inspect `Tavern.app/Contents/Info.plist`
+   in the ZIP independently. Update platform-specific artifact, desktop,
+   icon and cleanup paths only to match the corresponding released bytes.
+5. Exercise the actual `preflight` block in an isolated staging directory
+   and temporary HOME. Launch through a bin symlink, checking data/resource,
+   typelib and library lookup. Never run cleanup against a real user HOME.
 6. `bash scripts/validate-tap.sh`, then note in the PR how the digests were
    obtained.
