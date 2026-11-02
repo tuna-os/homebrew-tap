@@ -48,11 +48,11 @@ See [ROADMAP.md](ROADMAP.md) for the measured state.
   Thus each release skips the formula, and the release does not fail.
   [tuna-os/bluefin-cli#295](https://github.com/tuna-os/bluefin-cli/issues/295)
   tracks the credential.
-- `tavern`'s cask now follows the published v0.1.65 assets. Both archive
-  digests and platform application IDs were checked against downloaded
+- `tavern`'s cask now follows the published v0.1.65 assets. The repair
+  checked both archive digests and platform application IDs against downloaded
   release bytes. This is not a macOS installation or release-parity claim.
   Tavern's pipeline (`update-homebrew-tap.yml`) updates only version and
   checksums, but `TAP_GITHUB_TOKEN` is still missing
   ([tuna-os/Tavern#299](https://github.com/tuna-os/Tavern/issues/299)).
-  Until it is provisioned, bumps need a manual PR here. Cask lifecycle
-  structure remains maintained in this repository.
+  Until the owner provisions that token, bumps need a manual PR here.
+  This repository maintains the cask lifecycle structure.
