@@ -6,13 +6,17 @@ against. `Formula/` holds source-built formulae, `Casks/` packaged apps.
 Human docs: [`README.md`](README.md), [`CONTRIBUTING.md`](CONTRIBUTING.md),
 [`ROADMAP.md`](ROADMAP.md) (the admission and freshness contract).
 
-## A green check means "it parses", not "it installs"
+## A green check proves less than it looks like
 
-`scripts/validate-tap.sh` runs `ruby -c` and nothing else. It does not download
-artifacts, verify a checksum, or install anything — so a formula pointing at a
-404 URL or a wrong `sha256` passes CI and fails in the user's terminal.
-Producer-to-consumer validation is tracked in
-[#7](https://github.com/tuna-os/homebrew-tap/issues/7); until it exists, verify
+`scripts/validate-tap.sh` is static. Per file it runs `ruby -c`, requires every
+`url`/`head` to be under `https://github.com/tuna-os/`, and requires a pinned
+64-hex `sha256` (no `:no_check`). It never downloads anything, so a 404 URL
+inside the org or a wrong-but-well-formed `sha256` still passes it.
+
+Since [#81](https://github.com/tuna-os/homebrew-tap/pull/81), `ci.yml` also
+has `test-formula` and `test-cask` jobs: `brew audit`, then a Linux install of
+`corral-vm` (with `brew test`) and of the `tavern` cask (launched under Xvfb).
+Nothing installs `bluefin-cli`, and nothing runs on macOS. For those, verify
 URLs and digests by hand and say in the PR how you did it.
 
 Two details of that script are load-bearing:
@@ -37,13 +41,19 @@ protection or for agent auto-merge — add an aggregator job that runs
 unconditionally and reports success when the real job is skipped.
 
 `codecov.yml` sets a 45% project target, but nothing here produces or uploads
-coverage (there is no test suite, only a bash syntax check). It is inert
+coverage (the only suite is `scripts/test-validate-tap.sh`, a bash regression
+suite for the validator that CI runs without coverage). It is inert
 configuration, not a gate.
 
 ## Ownership: upstream publishes, mostly
 
-`corral-vm` is published by GoReleaser from `tuna-os/corral` — a hand edit to
-its version or `sha256` is overwritten by the next release, so fix it upstream.
+`bluefin-cli` is published by GoReleaser from `tuna-os/bluefin-cli` (the
+formula's header says `DO NOT EDIT`); the first automated update landed with
+v0.11.17. Fix its formula upstream, not here.
+
+`corral-vm` is published from `tuna-os/corral` by its `release-brew.yml`
+(`mislav/bump-homebrew-formula-action`, not GoReleaser) — a hand edit to its
+version or `sha256` is overwritten by the next release, so fix it upstream.
 It is named `corral-vm` only to avoid clashing with homebrew/core's unrelated
 `corral`; the installed command is still `corral`.
 

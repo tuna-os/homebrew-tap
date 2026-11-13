@@ -19,7 +19,10 @@ Never post account credentials or API keys in issues or pull requests.
 
 - `Formula/` contains source-built Homebrew formulae.
 - `Casks/` contains packaged application casks.
-- `scripts/validate-tap.sh` checks the Ruby syntax of every formula and cask.
+- `scripts/validate-tap.sh` checks every formula and cask. It checks the Ruby
+  syntax, the download URLs, and the `sha256` digests.
+- `scripts/test-validate-tap.sh` is the regression suite for the validation
+  script.
 - `README.md` lists packages that are available now or not yet added.
 - `ROADMAP.md` describes admission, ownership, freshness, and validation goals.
 
@@ -47,15 +50,27 @@ required by the syntax validation script.
    ./scripts/validate-tap.sh
    ```
 
+   If you change `scripts/validate-tap.sh`, also run its regression suite:
+
+   ```sh
+   bash scripts/test-validate-tap.sh
+   ```
+
 4. In the pull request, name the upstream release or issue that motivates
    the change. For a release update, state how you checked the download URL
    and the checksum.
 
 The validation script runs `ruby -c` against every `.rb` file under `Formula/`
-and `Casks/`. It catches only Ruby syntax errors; it does not download
-artifacts, check checksums, install packages, or exercise supported
-platforms. [Issue #7](https://github.com/tuna-os/homebrew-tap/issues/7)
-tracks the broader producer-to-consumer and install checks.
+and `Casks/`. It also makes sure that each download URL is under
+`https://github.com/tuna-os/` and that each download has a 64-character
+`sha256` digest. It does not download artifacts or compare a digest with the
+downloaded file.
+
+CI (`.github/workflows/ci.yml`) runs the regression suite and the validation
+script. It also runs `brew audit` and installs `corral-vm` and the `tavern`
+cask on Linux. CI does not install `bluefin-cli`, and it does not install on
+macOS. For these packages, examine the download URL and the checksum
+yourself.
 
 Run the script for documentation-only changes too, when Ruby is available, so
 the pull request reports the repository's current validation state.

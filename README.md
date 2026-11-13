@@ -20,11 +20,13 @@ Never post account credentials or API keys in issues or pull requests.
 
 | Formula/cask | Install |
 |---------|---------|
+| [bluefin-cli](https://github.com/tuna-os/bluefin-cli) | `brew install bluefin-cli` |
 | [corral-vm](https://github.com/tuna-os/corral) | `brew install corral-vm` |
 | [tavern](https://github.com/tuna-os/Tavern) (cask, macOS + Linux) | `brew install --cask tavern` |
 
 ```sh
 brew tap tuna-os/tap
+brew install bluefin-cli
 brew install corral-vm
 brew install --cask tavern
 ```
@@ -37,17 +39,9 @@ documentation change.
 
 ## Pending
 
-The two integrations in this list have a publisher already. The same missing
-credential stops both of them: a token with `contents:write` on this repository.
+One integration in this list has a publisher but no credential to use it.
 See [ROADMAP.md](ROADMAP.md) for the measured state.
 
-- `bluefin-cli` (from [tuna-os/bluefin-cli](https://github.com/tuna-os/bluefin-cli))
-  is not here yet. Releases ship binary assets since v0.10.6.
-  Its GoReleaser configuration has a Homebrew publisher for `Formula/` here.
-  But the `HOMEBREW_TAP_TOKEN` secret is empty in that repository.
-  Thus each release skips the formula, and the release does not fail.
-  [tuna-os/bluefin-cli#295](https://github.com/tuna-os/bluefin-cli/issues/295)
-  tracks the credential.
 - `tavern`'s cask now follows the published v0.1.65 assets. The repair
   checked both archive digests and platform application IDs against downloaded
   release bytes. This is not a macOS installation or release-parity claim.
