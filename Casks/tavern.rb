@@ -1,9 +1,14 @@
 cask "tavern" do
-  version "0.1.9"
+  version "0.1.65"
 
   name "Tavern"
   desc "Modern Homebrew client built with Python and GTK 4"
   homepage "https://github.com/tuna-os/Tavern"
+
+  # Both published launchers use the Homebrew Python/GTK stack.
+  depends_on formula: "pygobject3"
+  depends_on formula: "gtk4"
+  depends_on formula: "libadwaita"
 
   livecheck do
     url "https://github.com/tuna-os/Tavern/releases.atom"
@@ -11,20 +16,20 @@ cask "tavern" do
   end
 
   on_macos do
-    sha256 "ae32e225e823d1654c2e83f98b93f87a9e153d71af5b5f7526ad391d910b1010"
+    sha256 "47c7391ba6266e86d66f07530d623473da175263614a77cc8820c6cf8d5a2dc2"
     url "https://github.com/tuna-os/Tavern/releases/download/v#{version}/Tavern-macOS.zip"
 
     app "Tavern.app"
 
     zap trash: [
       "~/Library/Application Support/Tavern",
-      "~/Library/Preferences/dev.hanthor.Tavern.*",
-      "~/Library/Caches/dev.hanthor.Tavern",
+      "~/Library/Preferences/org.tunaos.tavern.*",
+      "~/Library/Caches/org.tunaos.tavern",
     ]
   end
 
   on_linux do
-    sha256 "0176f7a3c7372b04dfeda34405068edab8349bc017b48c016b0ea6d40e1e70b3"
+    sha256 "99441c915f758643c50870ddf4433728d898ffb64308f98ce211a63cab71799c"
     url "https://github.com/tuna-os/Tavern/releases/download/v#{version}/Tavern-Linux.AppImage"
 
     # The extracted AppImage bundles its own GTK4 but ships only the Adw
@@ -32,24 +37,15 @@ cask "tavern" do
     # runtime to set up the loader path: the app needs the brew GTK stack
     # for libadwaita (and as fallback libs) plus the LD_LIBRARY_PATH export
     # in preflight below.
-    depends_on formula: "pygobject3"
-    depends_on formula: "gtk4"
-    depends_on formula: "libadwaita"
 
     binary "squashfs-root/AppRun", target: "tavern"
 
-    # The v0.1.9 AppImage still ships dev.hanthor.Tavern.* internally --
-    # the org.tunaos.tavern application-ID rename in the Tavern source tree
-    # (data/org.tunaos.tavern.desktop.in etc.) landed after this release was
-    # built. Verified directly by extracting the actual v0.1.9 AppImage
-    # rather than assuming the current source tree's naming: these paths
-    # must track whatever ID the *released* binary actually uses, and get
-    # updated here again once a release is cut from the renamed source.
-    artifact "squashfs-root/usr/share/icons/hicolor/scalable/apps/dev.hanthor.Tavern.svg",
-             target: "#{Dir.home}/.local/share/icons/hicolor/scalable/apps/dev.hanthor.Tavern.svg"
+    # Verified in the published v0.1.65 AppImage, not inferred from source.
+    artifact "squashfs-root/usr/share/icons/hicolor/scalable/apps/org.tunaos.tavern.svg",
+             target: "#{Dir.home}/.local/share/icons/hicolor/scalable/apps/org.tunaos.tavern.svg"
 
-    artifact "squashfs-root/usr/share/applications/dev.hanthor.Tavern.desktop",
-             target: "#{Dir.home}/.local/share/applications/dev.hanthor.Tavern.desktop"
+    artifact "squashfs-root/usr/share/applications/org.tunaos.tavern.desktop",
+             target: "#{Dir.home}/.local/share/applications/org.tunaos.tavern.desktop"
 
     preflight do
       appimage_path = "#{staged_path}/Tavern-Linux.AppImage"
@@ -64,8 +60,10 @@ cask "tavern" do
       # With:     this_dir="$(dirname "$(readlink -f "$0")")"
       apprun_path = "#{staged_path}/squashfs-root/AppRun"
       apprun = File.read(apprun_path)
-      apprun.gsub!('this_dir="$(readlink -f "$(dirname "$0")")"',
-                   'this_dir="$(dirname "$(readlink -f "$0")")"')
+      unless apprun.sub!('this_dir="$(readlink -f "$(dirname "$0")")"',
+                         'this_dir="$(dirname "$(readlink -f "$0")")"')
+        raise "Unsupported AppRun path setup; inspect the released AppImage"
+      end
       # PATCH: set TAVERN_DATADIR so the Python script finds gresource/icons
       # relative to the AppDir, not the hardcoded meson prefix (/usr/share/tavern)
       # PATCH: export the bundled usr/lib on LD_LIBRARY_PATH. The AppImage
@@ -75,20 +73,23 @@ cask "tavern" do
       # #{HOMEBREW_PREFIX}/lib covers what the bundle omits (notably
       # libadwaita, declared in depends_on above): bundled libs win, brew
       # libs fill the gaps.
-      apprun.sub!('exec "$this_dir"/AppRun.wrapped "$@"',
-                  "export TAVERN_DATADIR=\"$this_dir/usr/share/tavern\"\n" \
-                  "export TAVERN_LOCALEDIR=\"$this_dir/usr/share/locale\"\n" \
-                  "export LD_LIBRARY_PATH=\"$this_dir/usr/lib:#{HOMEBREW_PREFIX}/lib:$LD_LIBRARY_PATH\"\n" \
-                  'exec "$this_dir"/AppRun.wrapped "$@"')
+      unless apprun.sub!('exec "$this_dir"/AppRun.wrapped "$@"',
+                         "export TAVERN_DATADIR=\"$this_dir/usr/share/tavern\"\n" \
+                         "export TAVERN_LOCALEDIR=\"$this_dir/usr/share/locale\"\n" \
+                         "export LD_LIBRARY_PATH=\"$this_dir/usr/lib:#{HOMEBREW_PREFIX}/lib:$LD_LIBRARY_PATH\"\n" \
+                         'exec "$this_dir"/AppRun.wrapped "$@"')
+        raise "Unsupported AppRun entry point; inspect the released AppImage"
+      end
+
       File.write(apprun_path, apprun)
 
       FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
       FileUtils.mkdir_p "#{Dir.home}/.local/share/icons/hicolor/scalable/apps"
 
-      desktop = File.read("#{staged_path}/squashfs-root/usr/share/applications/dev.hanthor.Tavern.desktop")
+      desktop = File.read("#{staged_path}/squashfs-root/usr/share/applications/org.tunaos.tavern.desktop")
       desktop.gsub!(%r{^Exec=.*}, "Exec=#{HOMEBREW_PREFIX}/bin/tavern")
-      desktop.gsub!(%r{^Icon=.*}, "Icon=dev.hanthor.Tavern")
-      File.write("#{staged_path}/squashfs-root/usr/share/applications/dev.hanthor.Tavern.desktop", desktop)
+      desktop.gsub!(%r{^Icon=.*}, "Icon=org.tunaos.tavern")
+      File.write("#{staged_path}/squashfs-root/usr/share/applications/org.tunaos.tavern.desktop", desktop)
     end
 
     postflight do
@@ -100,10 +101,10 @@ cask "tavern" do
     end
 
     zap trash: [
-      "~/.local/share/applications/dev.hanthor.Tavern.desktop",
-      "~/.local/share/icons/hicolor/scalable/apps/dev.hanthor.Tavern.svg",
-      "~/.local/share/dev.hanthor.Tavern",
-      "~/.config/dev.hanthor.Tavern",
+      "~/.local/share/applications/org.tunaos.tavern.desktop",
+      "~/.local/share/icons/hicolor/scalable/apps/org.tunaos.tavern.svg",
+      "~/.local/share/org.tunaos.tavern",
+      "~/.config/org.tunaos.tavern",
       "~/.cache/tavern",
     ]
   end
