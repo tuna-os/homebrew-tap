@@ -15,9 +15,9 @@ inside the org or a wrong-but-well-formed `sha256` still passes it.
 
 Since [#81](https://github.com/tuna-os/homebrew-tap/pull/81), `ci.yml` also
 has `test-formula` and `test-cask` jobs: `brew audit`, then a Linux install of
-`corral-vm` (with `brew test`) and of the `tavern` cask (launched under Xvfb). Nothing installs `bluefin-cli`, and nothing runs on
-macOS. For those, verify URLs and digests by hand and say in the PR how you
-did it.
+`corral-vm` (with `brew test`) and of the `tavern` cask (launched under Xvfb).
+Nothing installs `bluefin-cli`, and nothing runs on macOS. For those, verify
+URLs and digests by hand and say in the PR how you did it.
 
 Two details of that script are load-bearing:
 

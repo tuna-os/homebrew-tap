@@ -36,10 +36,12 @@ cross-channel install/parity gate. Those acceptance steps remain required.
 
 The tap enforces per-file Ruby syntax, organization-owned download URLs and
 pinned SHA-256 digests via `scripts/validate-tap.sh` in pre-merge CI.
-Since [#81](https://github.com/tuna-os/homebrew-tap/pull/81), CI also runs the validator's regression suite and Linux
-install checks for `corral-vm` and `tavern` (closing [#7](https://github.com/tuna-os/homebrew-tap/issues/7),
+Since [#81](https://github.com/tuna-os/homebrew-tap/pull/81), CI also runs
+the validator's regression suite and Linux install checks for `corral-vm` and
+`tavern` (closing [#7](https://github.com/tuna-os/homebrew-tap/issues/7),
 [#48](https://github.com/tuna-os/homebrew-tap/issues/48) and
-[#68](https://github.com/tuna-os/homebrew-tap/issues/68)); `bluefin-cli` and macOS have no install check yet. Release-channel
+[#68](https://github.com/tuna-os/homebrew-tap/issues/68)); `bluefin-cli` and
+macOS have no install check yet. Release-channel
 ownership and freshness are tracked in
 [#12](https://github.com/tuna-os/homebrew-tap/issues/12).
 
