@@ -52,14 +52,17 @@ ownership and freshness are tracked in
 - [x] Tavern's authoritative version: its GitHub Releases are current again
   (v0.1.65 is the latest stable GitHub Release), so the cask
   follows Releases and the question is closed.
+- [x] bluefin-cli's publisher works: GoReleaser pushed `Formula/bluefin-cli.rb`
+  for v0.11.17, v0.11.18 and v0.11.19 (f251030, 4fa98da, c9c234f), so
+  `HOMEBREW_TAP_TOKEN` is set in bluefin-cli
+  ([bluefin-cli#295](https://github.com/tuna-os/bluefin-cli/issues/295)).
+  No CI job installs the formula yet.
 - [ ] Provision the tap write credential (`contents:write` on this repository)
-  and set it as `TAP_GITHUB_TOKEN` in Tavern and `HOMEBREW_TAP_TOKEN` in
-  bluefin-cli. Credential creation still requires the owner
-  ([Tavern#299](https://github.com/tuna-os/Tavern/issues/299),
-  [bluefin-cli#295](https://github.com/tuna-os/bluefin-cli/issues/295)).
-- [ ] Once the credential exists, authorize Tavern's `Update Homebrew Tap`
-  for the current published release and re-run or wait for the next
-  bluefin-cli release, then confirm the cask/formula and install/parity evidence.
+  as `TAP_GITHUB_TOKEN` in Tavern. Credential creation still requires the owner
+  ([Tavern#299](https://github.com/tuna-os/Tavern/issues/299)).
+- [ ] Once that credential exists, authorize Tavern's `Update Homebrew Tap`
+  for the current published release, then confirm the cask and
+  install/parity evidence.
 - [ ] Decide corral-vm's publisher: add a GoReleaser Homebrew block in corral,
   or keep manual bumps with a named owner. v0.7.0
   ([corral#339](https://github.com/tuna-os/corral/issues/339)) is the next
