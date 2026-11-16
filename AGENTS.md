@@ -56,10 +56,11 @@ Other workflows do run on a docs-only PR:
 - `drop-bot-review-requests.yml` removes auto-requested reviewers from
   bot-authored PRs. It is not a check on content.
 
-`codecov.yml` sets a 45% project target, but nothing here produces or uploads
-coverage (the only suite is `scripts/test-validate-tap.sh`, a bash regression
-suite for the validator that CI runs without coverage). It is inert
-configuration, not a gate.
+There is no `codecov.yml`. Nothing here produces or uploads coverage (the only
+suite is `scripts/test-validate-tap.sh`, a bash regression suite for the
+validator that CI runs without coverage), so a threshold would be inert
+configuration that looks like a gate. Add Codecov configuration only in the
+same change that adds a job that uploads a report.
 
 ## Ownership: upstream publishes, mostly
 
