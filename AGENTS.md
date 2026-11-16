@@ -34,11 +34,27 @@ Two details of that script are load-bearing:
 ## CI is path-filtered
 
 `ci.yml` triggers only on `Formula/**`, `Casks/**`, `scripts/**` and itself. A
-docs-only PR runs no jobs at all. That is fine as a cost decision and a trap as
+docs-only PR runs none of its jobs. That is fine as a cost decision and a trap as
 a *required* check: a required check that never runs stays pending forever and
 blocks the merge. If this workflow is ever marked required — for branch
 protection or for agent auto-merge — add an aggregator job that runs
 unconditionally and reports success when the real job is skipped.
+
+Other workflows do run on a docs-only PR:
+
+- `ste.yml` ("Prose") runs on `**.md`, `**.mdx`, `.ste-budget` and itself. It
+  calls the shared `tuna-os/.github` STE linter, which checks `README.md`,
+  `CONTRIBUTING.md` and any `docs/`/`blog/` tree (not `AGENTS.md` or
+  `ROADMAP.md`) against `.ste-budget`. The budget is `0`, so any new finding
+  in those files fails the PR. Reproduce from this repo's root with a
+  `tuna-os/.github` checkout:
+  `node <path-to-.github>/.github/actions/ste-lint/ste-lint.mjs --summary`.
+- `actions-security.yml` runs on every PR: `gh actions-lock --verify` against
+  `.github/workflows/actions.lock`, and `zizmor` over the workflows. A
+  workflow change that adds or moves a `uses:` pin must update `actions.lock`
+  in the same PR.
+- `drop-bot-review-requests.yml` removes auto-requested reviewers from
+  bot-authored PRs. It is not a check on content.
 
 `codecov.yml` sets a 45% project target, but nothing here produces or uploads
 coverage (the only suite is `scripts/test-validate-tap.sh`, a bash regression

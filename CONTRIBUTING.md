@@ -74,3 +74,22 @@ yourself.
 
 Run the script for documentation-only changes too, when Ruby is available, so
 the pull request reports the repository's current validation state.
+
+CI does not run `ci.yml` for a change to Markdown only. Two other checks run:
+
+- The Prose check (`.github/workflows/ste.yml`) runs when a Markdown file
+  changes. It checks `README.md` and `CONTRIBUTING.md` against the rules of
+  Simplified Technical English. The limit in `.ste-budget` is `0`, so one new
+  error fails the check. To run the same linter locally, clone
+  `tuna-os/.github` and run this command from the root of this repository:
+
+  ```sh
+  node <path-to-.github>/.github/actions/ste-lint/ste-lint.mjs --summary
+  ```
+
+  You need Node.js. The command shows each file with findings and the total.
+- The `actions-security` check (`.github/workflows/actions-security.yml`)
+  runs on all pull requests. It compares the workflow action pins with
+  `.github/workflows/actions.lock` and runs `zizmor` on the workflows. If you
+  change an action pin in a workflow, update `actions.lock` in the same pull
+  request.
