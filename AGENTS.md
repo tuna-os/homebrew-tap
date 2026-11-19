@@ -68,6 +68,16 @@ same change that adds a job that uploads a report.
 formula's header says `DO NOT EDIT`); the first automated update landed with
 v0.11.17. Fix its formula upstream, not here.
 
+Renovate must not edit a generated formula either. `config:recommended` turns
+on Renovate's homebrew manager for every `Formula/*.rb`, and that manager
+rewrites only the first `url` and `sha256` it finds. In `bluefin-cli.rb` that
+is the macOS Intel binary, which it would replace with a source tarball while
+the other platforms and `version` stay old. `renovate.json` therefore disables
+Renovate for `Formula/bluefin-cli.rb`, and `scripts/validate-tap.sh` fails any
+formula carrying the GoReleaser header that `renovate.json` does not disable
+the same way (`matchFileNames` plus `"enabled": false`). Add that rule in the
+same PR as any new generated formula.
+
 `corral-vm` is published from `tuna-os/corral` by its `release-brew.yml`
 (`mislav/bump-homebrew-formula-action`, not GoReleaser) — a hand edit to its
 version or `sha256` is overwritten by the next release, so fix it upstream.

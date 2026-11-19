@@ -10,6 +10,13 @@
         "github-actions"
       ],
       "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "GoReleaser in tuna-os/bluefin-cli publishes this formula. Renovate's homebrew manager would rewrite only its first url and sha256 (one platform's binary), so it must never edit the file. scripts/validate-tap.sh enforces this rule for every generated formula.",
+      "matchFileNames": [
+        "Formula/bluefin-cli.rb"
+      ],
+      "enabled": false
     }
   ]
 }
