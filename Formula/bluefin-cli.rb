@@ -5,21 +5,21 @@
 class BluefinCli < Formula
   desc "Make your terminal experience awesome — shell config, tool bundles, and theming for any OS"
   homepage "https://github.com/tuna-os/bluefin-cli"
-  version "0.15.5"
+  version "0.15.6"
   license "Apache-2.0"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/tuna-os/bluefin-cli/releases/download/v0.15.5/bluefin-cli_0.15.5_darwin_amd64.tar.gz"
-      sha256 "e5fc03d77161c4e56d28b900d2f615c05cd993a6c2e45921c5199506031eb0cc"
+      url "https://github.com/tuna-os/bluefin-cli/releases/download/v0.15.6/bluefin-cli_0.15.6_darwin_amd64.tar.gz"
+      sha256 "f6558523e22f1f81cd8bc374dd16cdacb93cb03fa8672bc3a7ed85ac66347ef7"
 
       define_method(:install) do
         bin.install "bluefin-cli"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/tuna-os/bluefin-cli/releases/download/v0.15.5/bluefin-cli_0.15.5_darwin_arm64.tar.gz"
-      sha256 "c0eb7b514026f31c843815d6585b97e2e2c7dcef344df6ee5e6c39733575ddc4"
+      url "https://github.com/tuna-os/bluefin-cli/releases/download/v0.15.6/bluefin-cli_0.15.6_darwin_arm64.tar.gz"
+      sha256 "a54deceab8e95cad1c39a55819655b5a82c6ceca52e328bbc46859a8aa89fb8f"
 
       define_method(:install) do
         bin.install "bluefin-cli"
@@ -29,15 +29,15 @@ class BluefinCli < Formula
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/tuna-os/bluefin-cli/releases/download/v0.15.5/bluefin-cli_0.15.5_linux_amd64.tar.gz"
-      sha256 "1fd147bd0733a2b9570ba080710d98208968ae10357de645136d90ccf4ee8102"
+      url "https://github.com/tuna-os/bluefin-cli/releases/download/v0.15.6/bluefin-cli_0.15.6_linux_amd64.tar.gz"
+      sha256 "95e194b89bf46a2ca3279d9f1114f7cf7059f3727e7242c490b45b4bc03948a4"
       define_method(:install) do
         bin.install "bluefin-cli"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/tuna-os/bluefin-cli/releases/download/v0.15.5/bluefin-cli_0.15.5_linux_arm64.tar.gz"
-      sha256 "78b085b955d8372551d3a2bcbce47b5428951b47bb0e7ff76acfe24e0eb36a0a"
+      url "https://github.com/tuna-os/bluefin-cli/releases/download/v0.15.6/bluefin-cli_0.15.6_linux_arm64.tar.gz"
+      sha256 "228df43041c757bde758feff5251e066e7f8452c23a848f4873ac9fa5db78da9"
       define_method(:install) do
         bin.install "bluefin-cli"
       end
